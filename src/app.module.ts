@@ -17,11 +17,19 @@ import { MailerModule } from '@nestjs-modules/mailer';
     BullModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: (config: ConfigService) => {
+        const redisConfig = config.get<string>('REDIS_URL');
+        const redisUrl = redisConfig ? new URL(redisConfig) : '';
         return {
           redis: {
-            host: config.get<string>('REDIS_HOST'),
-            password: config.get<string>('REDIS_PASSWORD'),
-            port: Number(config.get<string>('REDIS_PORT')),
+            host: redisUrl
+              ? redisUrl.hostname
+              : config.get<string>('REDIS_HOST'),
+            password: redisUrl
+              ? redisUrl.password
+              : config.get<string>('REDIS_PASSWORD'),
+            port: redisUrl
+              ? +redisUrl.port
+              : Number(config.get<string>('REDIS_PORT')),
           },
         };
       },
