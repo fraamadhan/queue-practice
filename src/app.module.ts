@@ -19,6 +19,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       useFactory: (config: ConfigService) => {
         const redisConfig = config.get<string>('REDIS_URL');
         const redisUrl = redisConfig ? new URL(redisConfig) : '';
+        console.log(redisUrl);
         return {
           redis: {
             host: redisUrl
